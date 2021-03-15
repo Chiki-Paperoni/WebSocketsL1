@@ -1,4 +1,4 @@
-# WebSocketsL1
+# WebSocketsL1 Live Table
 Course 3 networks Lab1
 
 Usage  
