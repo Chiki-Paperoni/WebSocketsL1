@@ -1,0 +1,10 @@
+{
+	"name": "live-table-example",
+	"version": "1.0.0",
+	"author": "Litvinchuk Holoborodko Evtushenko",
+	"description": "Live Table Websocket Example",
+	"license": "",
+	"dependencies": {
+		"ws": "^7.4.2"
+	}
+}

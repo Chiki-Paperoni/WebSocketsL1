@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<body>
+		<h1>Live table</h1>
+		<table id="table"></table>
+		<style>
+			input {
+				border: 1px solid green;
+				width: 54px;
+				padding: 6px;
+			}
+			input:focus {
+				border: 1px solid red;
+			}
+			.head {
+				text-align: center;
+			}
+		</style>
+		<script>
+			const socket = new WebSocket("ws://127.0.0.1:8000/");
+
+			const table = document.getElementById("table");
+			const cells = {};
+			const letters = [
+				"A",
+				"B",
+				"C",
+				"D",
+				"E",
+				"F",
+				"G",
+				"H",
+				"I",
+				"J",
+				"K",
+				"L",
+				"M",
+				"N",
+				"O",
+				"P",
+				"Q",
+				"R",
+				"S",
+				"T",
+				"U",
+				"V",
+				"W",
+				"X",
+				"Y",
+				"Z",
+			];
+
+			socket.onmessage = (event) => {
+				const change = JSON.parse(event.data);
+				const cell = cells[change.cell];
+				cell.value = change.value;
+				console.log(cell, cells, 1);
+			};
+
+			const tr = document.createElement("tr");
+			tr.innerHTML =
+				"<td></td>" +
+				letters.map((col) => `<td class="head">${col}</td>`).join("");
+			table.appendChild(tr);
+
+			const keyup = (event) => {
+				socket.send(
+					JSON.stringify({
+						cell: event.target.id,
+						value: event.target.value,
+					})
+				);
+			};
+
+			const createRow = (i) => {
+				const tr = document.createElement("tr");
+				tr.innerHTML =
+					`<td>${i}</td>` +
+					letters
+						.map((col) => `<td><input id="${col}${i}" type="text"></td>`)
+						.join("");
+				table.appendChild(tr);
+				letters.forEach((col) => {
+					const cell = col + i;
+					const input = document.getElementById(cell);
+					input.addEventListener("keyup", keyup);
+					cells[cell] = input;
+				});
+			};
+
+			for (let i = 1; i <= 40; i++) createRow(i);
+
+			fetch("http://localhost:8000/data")
+				.then((response) => {
+					return response.json();
+				})
+				.then((data) => {
+					console.log(data);
+
+					for (cell in data) {
+						console.log(cell, data[cell]);
+						console.log(cells[cell]);
+						cells[cell].value = data[cell];
+					}
+				});
+		</script>
+	</body>
+</html>
